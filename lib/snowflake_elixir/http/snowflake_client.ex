@@ -237,6 +237,11 @@ defmodule SnowflakeEx.HTTPClient do
     {:error, %SnowflakeEx.Result{success: false, messages: [%{message: message, severity: :error, error_code: error_code, sql_error: sql_error}]}}
   end
 
+  # Invalid session errors will not have anything in the `data` key.
+  defp process_response(%{"success" => false, "message" => message, "code" => error_code}, _) do
+    {:error, %SnowflakeEx.Result{success: false, messages: [%{message: message, severity: :error, error_code: error_code, sql_error: nil}]}}
+  end
+
   defp process_query_result_format(
          "json",
          %{
