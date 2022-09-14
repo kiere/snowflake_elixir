@@ -220,16 +220,19 @@ defmodule SnowflakeEx.HTTPClient do
   defp decode_column(_, value), do: value
 
   defp process_query(%{status_code: 200, body: body} = bar) do
-    Jason.decode!(body)
+    body
+    |> Jason.decode!()
     |> process_response()
   end
 
   defp process_query(_, _), do: {:error, "error"}
 
   defp process_response(%{"success" => true} = data) do
+    IO.inspect(data)
     data
     |> Map.get("data")
     |> Map.get("queryResultFormat")
+    |> IO.inspect()
     |> process_query_result_format(data["data"])
   end
 
